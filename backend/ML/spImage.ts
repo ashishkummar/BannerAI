@@ -1,1 +1,1 @@
-export const SYSTEM_Pimage = `Generate a lightweight image with a clean design. do not add any text`
+export const SYSTEM_Pimage = `Extract only the visual description from the following prompt. Focus on the scene, objects, colors, and overall style. Do not include any text in the image or HTML elements like buttons or links. Keep the image dimensions small, with a width or height of less than 200 pixels. - `
