@@ -6,7 +6,7 @@ import { SYSTEM_Pimage } from "../ML/spImage";
 export const generateImage = async (prompt: string) => {
   const SYSTEM_IMG = SYSTEM_Pimage;
   const finalPrompt = `${SYSTEM_IMG} ${prompt}`;
-  
+  console.log(finalPrompt)
   // Log the final prompt before making the request
  
   try {

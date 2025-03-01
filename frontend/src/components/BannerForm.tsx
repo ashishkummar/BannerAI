@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { createBannerHTML } from '../utils/bannerUtils'; // Import the createBannerHTML function
-import { extractBannerData } from '../utils/dataUtils'; // Import the extractBannerData function
-import { DEFAULT_PROMPS } from '../ML/prompts'; // Adjust the path based on the actual location
-import { TextField, Button, Box, Typography, CircularProgress, Container } from '@mui/material';
+import { createBannerHTML } from '../utils/bannerUtils';
+import { extractBannerData } from '../utils/dataUtils';
+import { DEFAULT_PROMPS } from '../ML/prompts';
+import { TextField, Button, Box, Typography, CircularProgress, Container, FormGroup, FormControlLabel, Switch } from '@mui/material';
 
 const BannerForm = () => {
-    const [bannerHTML, setBannerHTML] = useState<string>(''); // State for storing the banner HTML
-    const [userPrompt, setUserPrompt] = useState<string>(''); // State to hold user input
-    const [loading, setLoading] = useState<boolean>(false); // State for loading indicator
-    const [filteredHTML, setFilteredHTML] = useState<string>(''); // State to hold filtered HTML to show in textarea
-    const [showFilteredHTML, setShowFilteredHTML] = useState<boolean>(false); // State to control visibility of filtered HTML response
+    const [bannerHTML, setBannerHTML] = useState<string>('');
+    const [userPrompt, setUserPrompt] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [bannerData, setBannerData] = useState<any>(null); // Store extracted banner data
+    const [generatedImage, setGeneratedImage] = useState<string>('');
+    const [showFilteredHTML, setShowFilteredHTML] = useState<boolean>(false);
+    const [generateImage, setGenerateImage] = useState<boolean>(false); // State for Switch (OFF by default)
 
-    // Fetch and set a random prompt on component mount
     useEffect(() => {
         const setDefaultPrompt = () => {
             if (DEFAULT_PROMPS && DEFAULT_PROMPS.length > 0) {
@@ -24,57 +25,83 @@ const BannerForm = () => {
         setDefaultPrompt();
     }, []);
 
-    // Function to handle input change
     const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setUserPrompt(e.target.value);
     };
 
-    // Function to handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true); // Start loading when the user submits the prompt
+        setLoading(true);
 
         try {
+            // Fetch banner HTML
             const response = await fetch('http://localhost:5000/api/generate', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ prompt: userPrompt }), // Send user input as part of the request body
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: userPrompt }),
             });
             const data = await response.json();
 
-            // Extract and filter the banner data using extractBannerData
-            const bannerData = extractBannerData(data);
-
-            if (bannerData) {
-                const banner = createBannerHTML(bannerData);
-                setBannerHTML(banner); // Set the banner HTML to state
-                setFilteredHTML(banner); // Update the filtered HTML state
+            const extractedBannerData = extractBannerData(data);
+            if (extractedBannerData) {
+                setBannerData(extractedBannerData);
+                setBannerHTML(createBannerHTML(extractedBannerData));
             } else {
                 console.error('Invalid or missing banner data.');
-                setFilteredHTML('❌ Invalid or missing banner data.');
+                setBannerHTML('❌ Invalid or missing banner data.');
+            }
+
+            // Fetch image only if the switch is turned ON
+            if (generateImage) {
+                const imageResponse = await fetch('http://localhost:5000/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: userPrompt }),
+                });
+                const imageData = await imageResponse.json();
+
+                if (imageData && imageData.image) {
+                    setGeneratedImage(imageData.image);
+                } else {
+                    console.error('No image data received.');
+                }
+            } else {
+                setGeneratedImage(''); // Clear the image if switch is OFF
             }
         } catch (error) {
             console.error('Failed to fetch data:', error);
-            setFilteredHTML('❌ Failed to generate banner.');
+            setBannerHTML('❌ Failed to generate banner.');
         } finally {
-            setLoading(false); // Stop loading when the request is done
+            setLoading(false);
         }
     };
 
-    // Function to toggle visibility of the filtered HTML response
-    const toggleFilteredHTML = () => {
-        setShowFilteredHTML(prevState => !prevState);
-    };
+    // Update bannerData.imageUrl when generatedImage is available
+    useEffect(() => {
+        if (generateImage && generatedImage && bannerData) {
+            const updatedBannerData = { ...bannerData, imageUrl: generatedImage };
+            setBannerHTML(createBannerHTML(updatedBannerData));
+        }
+    }, [generatedImage]);
 
     return (
         <Container>
-            <Box sx={{ textAlign: 'center', marginBottom: 4 }}>
-                 
+            {/* Switch to enable/disable AI Image Generation */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+                <FormGroup>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={generateImage}
+                                onChange={(e) => setGenerateImage(e.target.checked)}
+                            />
+                        }
+                        label="✨ AI Generated Image"
+                    />
+                </FormGroup>
             </Box>
 
-            {/* Form layout with TextField and Button */}
+            {/* Prompt Input Field */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <TextField
                     label="Enter prompt here"
@@ -88,62 +115,56 @@ const BannerForm = () => {
                     sx={{ marginBottom: 2, maxWidth: '600px' }}
                 />
 
-              <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  sx={{ padding: '10px 20px', backgroundColor: '#4CAF50' }}
-              >
-                  {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Generate Banner'}
-              </Button>
-
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    sx={{ padding: '10px 20px', backgroundColor: '#4CAF50' }}
+                >
+                    {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Generate Banner'}
+                </Button>
             </Box>
 
-            {/* Filtered HTML Section - Conditionally rendered */}
-            {bannerHTML && ( // Only show the "Show Filtered HTML" button after the banner is generated
+            {/* Render Banner */}
+            {bannerHTML && (
                 <Box sx={{ marginTop: 4 }}>
-                  {/*
-                    <Button
-                        variant="outlined"
-                        onClick={toggleFilteredHTML}
-                        sx={{ marginBottom: 2 }}
-                    >
-                        {showFilteredHTML ? 'Hide  HTML' : 'Show HTML'}
-                    </Button>*/}
-                    
-
                     {showFilteredHTML && (
-                        <>
-                         
-                            <TextField
-                                value={filteredHTML}
-                                multiline
-                                rows={6}
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                                sx={{
-                                    marginBottom: 4,
-                                    maxWidth: '600px',
-                                    backgroundColor: '#f5f5f5',
-                                }}
-                            />
-                        </>
+                        <TextField
+                            value={bannerHTML}
+                            multiline
+                            rows={6}
+                            fullWidth
+                            variant="outlined"
+                            InputProps={{ readOnly: true }}
+                            sx={{ marginBottom: 4, maxWidth: '600px', backgroundColor: '#f5f5f5' }}
+                        />
                     )}
                 </Box>
             )}
 
-            {/* Displaying the generated banner */}
-            <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                    Generated Banner:
-                </Typography>
-                <Box sx={{ border: '1px solid #ccc', padding: 2 }}>
+            <Box sx={{ display: 'flex', 
+                justifyContent: 'center', 
+                marginBottom: 4 ,
+                opacity: generateImage ? (generatedImage ? 1 : 0) : 1, // Control opacity based on conditions
+                transition: 'opacity 0.5s ease-in-out', // Smooth transition effect
+                
+                }}>
+                <Box sx={{ border: '0px solid #ccc', padding: 2 }}>
                     <div dangerouslySetInnerHTML={{ __html: bannerHTML }} />
                 </Box>
             </Box>
+
+            {/* Display Generated Image Only if Switch is ON */}
+            {generateImage && generatedImage && (
+                <Box sx={{ marginTop: 4 }}>
+                    <Typography variant="h5" gutterBottom>
+                        Generated Image:
+                    </Typography>
+                    <Box sx={{ border: '1px solid #ccc', padding: 2, textAlign: 'center' }}>
+                        <img src={generatedImage} alt="Generated Banner" style={{ maxWidth: '100%' }} />
+                    </Box>
+                </Box>
+            )}
         </Container>
     );
 };
