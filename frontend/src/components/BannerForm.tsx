@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
+
 import { createBannerHTML } from '../utils/bannerUtils';
 import { extractBannerData } from '../utils/dataUtils';
 import { DEFAULT_PROMPS } from '../ML/prompts';
@@ -170,6 +172,7 @@ const BannerForm = () => {
 
             {/* Prompt Input Field */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+               <Box sx={{ marginBottom: 2, width: '800px' }}>
                 <TextField
                     label="Enter prompt here"
                     value={userPrompt}
@@ -179,9 +182,28 @@ const BannerForm = () => {
                     multiline
                     rows={4}
                     fullWidth
-                    sx={{ marginBottom: 2, maxWidth: '600px' }}
-                />
+                    sx={{ marginBottom: 2, width: '100%' }}
+                /> 
+                <Typography
+                    sx={{ textAlign: 'right', marginTop: '-10px', fontSize: '1rem', cursor: 'pointer' }}
+                   
+                >
+                  <CloudSyncIcon fontSize="small" color="primary"
+                    onClick={() => {
+                        if (DEFAULT_PROMPS && DEFAULT_PROMPS.length > 0) {
+                            const randomPrompt = DEFAULT_PROMPS[Math.floor(Math.random() * DEFAULT_PROMPS.length)].prompt;
+                            setFullPrompt(randomPrompt);
+                        }
+                    }}
+                  />;
+                </Typography>
 
+
+
+                
+
+
+                 </Box>
                 <Button
                     variant="contained"
                     onClick={handleSubmit}
