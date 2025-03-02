@@ -1,7 +1,8 @@
 import axios from "axios";
-import { HF_API_KEY, IMAGE_MODEL } from "../config/config";
+import { HF_API_KEY } from "../config/config";
 // @ts-ignore
 import { SYSTEM_Pimage } from "../ML/spImage";
+import { selectedModel } from "../routes/apiRoutes"; 
 
 export const generateImage = async (prompt: string) => {
   const SYSTEM_IMG = SYSTEM_Pimage;
@@ -13,7 +14,7 @@ export const generateImage = async (prompt: string) => {
  
 
     const response = await axios.post(
-      `https://api-inference.huggingface.co/models/${IMAGE_MODEL}`,
+      `https://api-inference.huggingface.co/models/${selectedModel}`,
       { inputs: finalPrompt },
       {
         headers: {
