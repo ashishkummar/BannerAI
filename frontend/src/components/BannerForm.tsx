@@ -8,6 +8,8 @@ import { TextField, Button, Box, Typography, CircularProgress, Container, FormGr
 const BannerForm = () => {
     const [bannerHTML, setBannerHTML] = useState<string>('');
     const [userPrompt, setUserPrompt] = useState<string>('');
+    const [fullPrompt, setFullPrompt] = useState<string>("");
+
     const [loading, setLoading] = useState<boolean>(false);
     const [bannerData, setBannerData] = useState<any>(null); // Store extracted banner data
     const [generatedImage, setGeneratedImage] = useState<string>('');
@@ -54,9 +56,9 @@ const BannerForm = () => {
         const setDefaultPrompt = () => {
             if (DEFAULT_PROMPS && DEFAULT_PROMPS.length > 0) {
                 const randomPrompt = DEFAULT_PROMPS[Math.floor(Math.random() * DEFAULT_PROMPS.length)].prompt;
-                setUserPrompt(randomPrompt);
+                setFullPrompt(randomPrompt);
             } else {
-                setUserPrompt('❌ No prompts found.');
+                setFullPrompt("❌ No prompts found.");
             }
         };
         setDefaultPrompt();
@@ -121,6 +123,25 @@ const BannerForm = () => {
         }
     }, [generatedImage]);
 
+
+    useEffect(() => {
+        if (!fullPrompt) return;
+    
+        let index = 0;
+        setUserPrompt(""); // Clear before typing starts
+    
+        const interval = setInterval(() => {
+            setUserPrompt((prev) => fullPrompt.slice(0, index + 1)); // Update directly with slice
+            index++;
+    
+            if (index >= fullPrompt.length) {
+                clearInterval(interval);
+            }
+        }, 10); // Adjust speed
+    
+        return () => clearInterval(interval);
+    }, [fullPrompt]);
+    
  
 
     return (
