@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
+
 import { createBannerHTML } from '../utils/bannerUtils';
 import { extractBannerData } from '../utils/dataUtils';
 import { DEFAULT_PROMPS } from '../ML/prompts';
@@ -8,6 +10,8 @@ import { TextField, Button, Box, Typography, CircularProgress, Container, FormGr
 const BannerForm = () => {
     const [bannerHTML, setBannerHTML] = useState<string>('');
     const [userPrompt, setUserPrompt] = useState<string>('');
+    const [fullPrompt, setFullPrompt] = useState<string>("");
+
     const [loading, setLoading] = useState<boolean>(false);
     const [bannerData, setBannerData] = useState<any>(null); // Store extracted banner data
     const [generatedImage, setGeneratedImage] = useState<string>('');
@@ -54,9 +58,9 @@ const BannerForm = () => {
         const setDefaultPrompt = () => {
             if (DEFAULT_PROMPS && DEFAULT_PROMPS.length > 0) {
                 const randomPrompt = DEFAULT_PROMPS[Math.floor(Math.random() * DEFAULT_PROMPS.length)].prompt;
-                setUserPrompt(randomPrompt);
+                setFullPrompt(randomPrompt);
             } else {
-                setUserPrompt('❌ No prompts found.');
+                setFullPrompt("❌ No prompts found.");
             }
         };
         setDefaultPrompt();
@@ -121,6 +125,25 @@ const BannerForm = () => {
         }
     }, [generatedImage]);
 
+
+    useEffect(() => {
+        if (!fullPrompt) return;
+    
+        let index = 0;
+        setUserPrompt(""); // Clear before typing starts
+    
+        const interval = setInterval(() => {
+            setUserPrompt((prev) => fullPrompt.slice(0, index + 1)); // Update directly with slice
+            index++;
+    
+            if (index >= fullPrompt.length) {
+                clearInterval(interval);
+            }
+        }, 10); // Adjust speed
+    
+        return () => clearInterval(interval);
+    }, [fullPrompt]);
+    
  
 
     return (
@@ -149,6 +172,7 @@ const BannerForm = () => {
 
             {/* Prompt Input Field */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+               <Box sx={{ marginBottom: 2, width: '800px' }}>
                 <TextField
                     label="Enter prompt here"
                     value={userPrompt}
@@ -158,9 +182,28 @@ const BannerForm = () => {
                     multiline
                     rows={4}
                     fullWidth
-                    sx={{ marginBottom: 2, maxWidth: '600px' }}
-                />
+                    sx={{ marginBottom: 2, width: '100%' }}
+                /> 
+                <Typography
+                    sx={{ textAlign: 'right', marginTop: '-10px', fontSize: '1rem', cursor: 'pointer' }}
+                   
+                >
+                  <CloudSyncIcon fontSize="small" color="primary"
+                    onClick={() => {
+                        if (DEFAULT_PROMPS && DEFAULT_PROMPS.length > 0) {
+                            const randomPrompt = DEFAULT_PROMPS[Math.floor(Math.random() * DEFAULT_PROMPS.length)].prompt;
+                            setFullPrompt(randomPrompt);
+                        }
+                    }}
+                  />;
+                </Typography>
 
+
+
+                
+
+
+                 </Box>
                 <Button
                     variant="contained"
                     onClick={handleSubmit}
