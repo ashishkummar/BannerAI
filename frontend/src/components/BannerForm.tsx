@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createBannerHTML } from '../utils/bannerUtils';
 import { extractBannerData } from '../utils/dataUtils';
 import { DEFAULT_PROMPS } from '../ML/prompts';
+import {ModelSelector} from "./Autocomplete"
 import { TextField, Button, Box, Typography, CircularProgress, Container, FormGroup, FormControlLabel, Switch } from '@mui/material';
 
 const BannerForm = () => {
@@ -11,7 +12,43 @@ const BannerForm = () => {
     const [bannerData, setBannerData] = useState<any>(null); // Store extracted banner data
     const [generatedImage, setGeneratedImage] = useState<string>('');
     const [showFilteredHTML, setShowFilteredHTML] = useState<boolean>(false);
-    const [generateImage, setGenerateImage] = useState<boolean>(false); // State for Switch (OFF by default)
+    const [generateImage, setGenerateImage] = useState<boolean>(true); // State for Switch (OFF by default)
+
+    //
+
+    const [selectedModel, setSelectedModel] = useState<string>('');
+    const [modelList, setModelList] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchModels = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/models');
+                const data = await response.json();
+                setModelList(data.models);
+                setSelectedModel(data.selectedModel);
+            } catch (error) {
+                console.error('Error fetching model list:', error);
+            }
+        };
+        fetchModels();
+    }, []);
+
+    const handleModelChange = async (newModel: string) => {
+        setSelectedModel(newModel);
+    
+        try {
+            await fetch('http://localhost:5000/api/set-model', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: newModel }),
+            });
+        } catch (error) {
+            console.error('Error updating model:', error);
+        }
+    };
+    
+
+
 
     useEffect(() => {
         const setDefaultPrompt = () => {
@@ -84,22 +121,31 @@ const BannerForm = () => {
         }
     }, [generatedImage]);
 
+ 
+
     return (
         <Container>
             {/* Switch to enable/disable AI Image Generation */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2, marginBottom: 10 }}>
+                {/* Left - Model Selector */}
+                
+                 
+                <ModelSelector sx={{ marginRight: 3 }} onModelChange={handleModelChange} />
+
+                {/* Right - Switch Toggle */}
                 <FormGroup>
                     <FormControlLabel
-                        control={
-                            <Switch
-                                checked={generateImage}
-                                onChange={(e) => setGenerateImage(e.target.checked)}
-                            />
-                        }
-                        label="✨ AI Generated Image"
+                    control={
+                        <Switch
+                        checked={generateImage}
+                        onChange={(e) => setGenerateImage(e.target.checked)}
+                        />
+                    }
+                    label="✨ AI Generated Image"
                     />
                 </FormGroup>
-            </Box>
+                </Box>
+
 
             {/* Prompt Input Field */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -145,8 +191,8 @@ const BannerForm = () => {
             <Box sx={{ display: 'flex', 
                 justifyContent: 'center', 
                 marginBottom: 4 ,
-                opacity: generateImage ? (generatedImage ? 1 : 0) : 1, // Control opacity based on conditions
-                transition: 'opacity 0.5s ease-in-out', // Smooth transition effect
+                 opacity: generateImage ? (generatedImage ? 1 : 0) : 1, // Control opacity based on conditions
+                 transition: 'opacity 0.5s ease-in-out', // Smooth transition effect
                 
                 }}>
                 <Box sx={{ border: '0px solid #ccc', padding: 2 }}>

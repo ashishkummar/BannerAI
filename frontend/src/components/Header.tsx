@@ -17,7 +17,7 @@ const Header: React.FC = () => {
               Banner Generator 
           </Typography>
           <Typography variant="h6" component="p">
-            Create your custom banner using AI 🤖
+            Create your custom banner using AI 
           </Typography>
         </Container>
       </Box>
