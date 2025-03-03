@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const HF_API_KEY = process.env.HUGGINGFACE_API_KEY;
+export const FIREBASE_API_KEY = process.env.FIREBAS_EKEY;
 export const TEXT_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"; // Text model
 
 export const IMAGE_MODELS = [
