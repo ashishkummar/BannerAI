@@ -2,6 +2,9 @@ import { Router, Request, Response } from "express";
 import { generateText } from "../controllers/textGenerationController";
 import { generateImage } from "../controllers/imageGenerationController";
 import {IMAGE_MODELS} from "../config/config"
+import { db } from "../firebase/firebaseConfig"; // Import Firestore setup
+import admin from "firebase-admin";
+
 const router = Router();
  
 export let selectedModel = IMAGE_MODELS[0];
@@ -73,5 +76,32 @@ router.post("/set-model", (req: Request, res: Response) => {
 
   return res.json({ message: `Model set to ${model}` });
 });
+
+
+//////fire base APIs
+// Save a user prompt
+ //@ts-ignore
+router.post("/savePrompt", async (req, res) => {
+  try {
+    const { userId, promptText } = req.body;
+
+    if (!userId || !promptText) {
+      return res.status(400).json({ error: "userId and promptText are required" });
+    }
+
+    const promptRef = db.collection("user_prompts").doc();
+    await promptRef.set({
+      userId,
+      prompt: promptText,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.status(200).json({ message: "Prompt saved successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: "Error saving prompt" });
+  }
+});
+
+
 
 export default router;

@@ -122,5 +122,64 @@ export const DEFAULT_PROMPS = [
   },
   {
     "prompt": "Generate a 320x250 banner for a luxury travel experience, 'Travel in Style' text, and a CTA button saying 'Book Your Experience.'"
+  },{
+    "prompt": "Design a 300x600 banner for a space exploration program with an astronaut floating in space, 'Discover the Universe' text, and a CTA button saying 'Learn More.'"
+  },
+  {
+    "prompt": "Create a 320x250 banner for a coding bootcamp with a futuristic digital theme, 'Become a Developer' text, and a CTA button labeled 'Start Learning.'"
+  },
+  {
+    "prompt": "Generate a 300x250 banner for a science fair, featuring a microscope, atoms, and 'Unlock Scientific Wonders' text with a CTA button saying 'Join Now.'"
+  },
+  {
+    "prompt": "Build a 300x600 banner for an AI-powered writing assistant, 'Enhance Your Writing' text, and a CTA button labeled 'Try for Free.'"
+  },
+  {
+    "prompt": "Design a 728x90 banner for a weather forecasting app with stormy clouds and 'Stay Ahead of the Weather' text, and a CTA button labeled 'Download Now.'"
+  },
+  {
+    "prompt": "Create a 320x250 banner for a mental health awareness campaign with a soothing blue background, 'Your Mind Matters' text, and a CTA button labeled 'Get Support.'"
+  },
+  {
+    "prompt": "Generate a 160x600 banner for an astronomy club with a starry night background, 'Explore the Cosmos' text, and a CTA button labeled 'Join Us.'"
+  },
+  {
+    "prompt": "Design a 300x600 banner for an e-learning platform focusing on AI courses, 'Master Artificial Intelligence' text, and a CTA button saying 'Enroll Today.'"
+  },
+  {
+    "prompt": "Build a 728x90 banner for a cybersecurity awareness campaign, 'Stay Secure Online' text, and a CTA button labeled 'Learn More.'"
+  },
+  {
+    "prompt": "Create a 320x250 banner for an eco-tourism initiative with a lush green forest, 'Travel Sustainably' text, and a CTA button saying 'Book Now.'"
+  },
+  {
+    "prompt": "Generate a 300x600 banner for a DNA testing service, 'Discover Your Ancestry' text, and a CTA button labeled 'Get Your Kit.'"
+  },
+  {
+    "prompt": "Design a 728x90 banner for an environmental NGO, 'Save the Planet' text, and a CTA button saying 'Take Action Now.'"
+  },
+  {
+    "prompt": "Create a 300x250 banner for a drone photography service with aerial landscape shots, 'Capture the Sky' text, and a CTA button saying 'Get a Quote.'"
+  },
+  {
+    "prompt": "Generate a 320x250 banner for a STEM education program with robotics and coding images, 'Innovate the Future' text, and a CTA button labeled 'Start Learning.'"
+  },
+  {
+    "prompt": "Build a 300x600 banner for a podcast streaming service with a microphone icon, 'Listen to Inspiring Stories' text, and a CTA button labeled 'Tune In.'"
+  },
+  {
+    "prompt": "Design a 728x90 banner for an online stock trading platform, 'Invest in Your Future' text, and a CTA button labeled 'Start Trading.'"
+  },
+  {
+    "prompt": "Create a 300x250 banner for a biohacking brand, 'Optimize Your Health' text, and a CTA button saying 'Explore Now.'"
+  },
+  {
+    "prompt": "Generate a 320x250 banner for a disaster relief fund, 'Help Those in Need' text, and a CTA button labeled 'Donate Today.'"
+  },
+  {
+    "prompt": "Design a 300x600 banner for a VR gaming experience with a futuristic headset, 'Enter the Metaverse' text, and a CTA button labeled 'Try Now.'"
+  },
+  {
+    "prompt": "Create a 728x90 banner for a climate change awareness campaign, 'Act Now for a Greener Tomorrow' text, and a CTA button labeled 'Join the Movement.'"
   }
 ];

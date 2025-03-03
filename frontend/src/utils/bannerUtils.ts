@@ -47,7 +47,7 @@ export function createBannerHTML(bannerData: BannerData): string {
             </span>
             <button style="
                 background-color: ${bannerData.cta.color}; 
-                color:rgb(240, 229, 229); 
+                color:rgb(111, 107, 107); 
                 padding: 12px 18px; 
                 border: 1px solid gray; 
                 border-radius: 6px; 

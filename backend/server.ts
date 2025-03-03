@@ -2,6 +2,8 @@ import express, { Express } from "express";  // Import Express type
 import cors from "cors";
 import bodyParser from "body-parser";
 import apiRoutes from "./routes/apiRoutes";
+import { db } from "../backend/firebase/firebaseConfig"; // Import Firestore setup
+
 
 // Initialize Express app with the correct type
 const app: Express = express();

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { TextField, Button, Box, Typography, CircularProgress, Container, FormGroup, FormControlLabel, Switch } from '@mui/material';
 
 import { createBannerHTML } from '../utils/bannerUtils';
 import { extractBannerData } from '../utils/dataUtils';
 import { DEFAULT_PROMPS } from '../ML/prompts';
 import {ModelSelector} from "./Autocomplete"
-import { TextField, Button, Box, Typography, CircularProgress, Container, FormGroup, FormControlLabel, Switch } from '@mui/material';
+import {saveUserPrompt} from '../utils/firebaseApi'
 
 const BannerForm = () => {
     const [bannerHTML, setBannerHTML] = useState<string>('');
@@ -72,6 +74,9 @@ const BannerForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        //saving users propmts in firebase
+        await saveUserPrompt({ userId: "anonymous", promptText: userPrompt });
+
         setLoading(true);
 
         try {
@@ -144,16 +149,16 @@ const BannerForm = () => {
         return () => clearInterval(interval);
     }, [fullPrompt]);
     
- 
+    
 
     return (
         <Container>
             {/* Switch to enable/disable AI Image Generation */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2, marginBottom: 10 }}>
+            <Box sx={{ display: "flex", width:'100%', justifyContent: "space-between", alignItems: "center", marginTop: 2, marginBottom: 10 }}>
                 {/* Left - Model Selector */}
                 
                  
-                <ModelSelector sx={{ marginRight: 3 }} onModelChange={handleModelChange} />
+                <ModelSelector sx={{ marginRight: 3, width:'420px' }} onModelChange={handleModelChange} />
 
                 {/* Right - Switch Toggle */}
                 <FormGroup>
@@ -208,9 +213,14 @@ const BannerForm = () => {
                     variant="contained"
                     onClick={handleSubmit}
                     disabled={loading}
-                    sx={{ padding: '10px 20px', backgroundColor: '#4CAF50' }}
+                    sx={{ padding: '10px 20px', backgroundColor: '#010101' }}
                 >
-                    {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Generate Banner'}
+                    {loading ? <CircularProgress size={24} sx={{ color: '#010101' }} /> :  (
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <AutoAwesomeIcon />
+                        Generate Banner
+                    </Box>
+                    ) }
                 </Button>
             </Box>
 
